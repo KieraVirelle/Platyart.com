@@ -1001,10 +1001,9 @@
     const backBtn = document.querySelector('.pixel-btn[aria-label="Back"]');
     const fwdBtn = document.querySelector('.pixel-btn[aria-label="Forward"]');
     const toTop = document.querySelector('.to-top');
-    let navHistory = ['landing'];
-    let navIndex = 0;
+    const tabOrder = Array.from(tabs);
 
-    function activate(targetId, pushHistory = true) {
+    function activate(targetId) {
       tabs.forEach(t => {
         const isActive = t.dataset.target === targetId;
         t.classList.toggle('active', isActive);
@@ -1012,12 +1011,6 @@
       });
       panes.forEach(p => p.classList.toggle('active', p.id === targetId));
       typeAddress(`platyart.studio/${targetId}`);
-      if (pushHistory) {
-        navHistory = navHistory.slice(0, navIndex + 1);
-        navHistory.push(targetId);
-        navIndex = navHistory.length - 1;
-      }
-      updateNavButtons();
     }
 
     tabs.forEach(tab => {
@@ -1051,32 +1044,15 @@
       if (!lightbox.hidden && (e.key === 'Escape' || e.key === 'Esc')) closeLightbox();
     });
 
-    function updateNavButtons() {
-      if (!backBtn || !fwdBtn) return;
-      backBtn.disabled = navIndex <= 0;
-      fwdBtn.disabled = navIndex >= navHistory.length - 1;
-      backBtn.style.opacity = backBtn.disabled ? 0.5 : 1;
-      fwdBtn.style.opacity = fwdBtn.disabled ? 0.5 : 1;
+    function activateByStep(step) {
+      const current = document.querySelector('.tab.active');
+      const idx = tabOrder.indexOf(current);
+      const nextIdx = (idx + step + tabOrder.length) % tabOrder.length;
+      activate(tabOrder[nextIdx].dataset.target);
     }
 
-    if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        if (navIndex > 0) {
-          navIndex -= 1;
-          activate(navHistory[navIndex], false);
-        }
-      });
-    }
-    if (fwdBtn) {
-      fwdBtn.addEventListener('click', () => {
-        if (navIndex < navHistory.length - 1) {
-          navIndex += 1;
-          activate(navHistory[navIndex], false);
-        }
-      });
-    }
-
-    updateNavButtons();
+    backBtn?.addEventListener('click', () => activateByStep(-1));
+    fwdBtn?.addEventListener('click', () => activateByStep(1));
 
     // back-to-top: show after scrolling the frame
     const frame = document.querySelector('.frame');
