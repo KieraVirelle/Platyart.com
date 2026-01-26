@@ -30,6 +30,8 @@
         radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.7) 0, rgba(255, 255, 255, 0) 38%),
         radial-gradient(circle at 82% 24%, rgba(255, 240, 246, 0.7) 0, rgba(255, 240, 246, 0) 32%),
         linear-gradient(135deg, #ffe8f0 0%, #fbe1df 50%, #f7cfd0 100%);
+      background-size: 160% 160%;
+      animation: driftBG 22s ease-in-out infinite alternate;
       font-family: 'Manrope', system-ui, sans-serif;
       color: var(--ink);
       display: block;
@@ -37,6 +39,12 @@
       position: relative;
       overflow: hidden; /* keep outer background still; scroll happens on frame */
       cursor: var(--cursor-pink);
+    }
+
+    @keyframes driftBG {
+      0%   { background-position: 0% 0%; }
+      50%  { background-position: 50% 20%; }
+      100% { background-position: 100% 40%; }
     }
 
     /* keep the pink Win98 cursor everywhere, including interactive elements */
@@ -932,8 +940,12 @@
     const lightboxImg = lightbox.querySelector('img');
     const lightboxClose = lightbox.querySelector('.lightbox__close');
     const addressText = document.getElementById('address-text');
+    const backBtn = document.querySelector('.pixel-btn[aria-label="Back"]');
+    const fwdBtn = document.querySelector('.pixel-btn[aria-label="Forward"]');
+    let navHistory = ['landing'];
+    let navIndex = 0;
 
-    function activate(targetId) {
+    function activate(targetId, pushHistory = true) {
       tabs.forEach(t => {
         const isActive = t.dataset.target === targetId;
         t.classList.toggle('active', isActive);
@@ -941,6 +953,12 @@
       });
       panes.forEach(p => p.classList.toggle('active', p.id === targetId));
       typeAddress(`platyart.studio/${targetId}`);
+      if (pushHistory) {
+        navHistory = navHistory.slice(0, navIndex + 1);
+        navHistory.push(targetId);
+        navIndex = navHistory.length - 1;
+      }
+      updateNavButtons();
     }
 
     tabs.forEach(tab => {
@@ -973,6 +991,33 @@
     window.addEventListener('keydown', (e) => {
       if (!lightbox.hidden && (e.key === 'Escape' || e.key === 'Esc')) closeLightbox();
     });
+
+    function updateNavButtons() {
+      if (!backBtn || !fwdBtn) return;
+      backBtn.disabled = navIndex <= 0;
+      fwdBtn.disabled = navIndex >= navHistory.length - 1;
+      backBtn.style.opacity = backBtn.disabled ? 0.5 : 1;
+      fwdBtn.style.opacity = fwdBtn.disabled ? 0.5 : 1;
+    }
+
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        if (navIndex > 0) {
+          navIndex -= 1;
+          activate(navHistory[navIndex], false);
+        }
+      });
+    }
+    if (fwdBtn) {
+      fwdBtn.addEventListener('click', () => {
+        if (navIndex < navHistory.length - 1) {
+          navIndex += 1;
+          activate(navHistory[navIndex], false);
+        }
+      });
+    }
+
+    updateNavButtons();
 
     // typewriter for address bar
     let typingTimeout;
