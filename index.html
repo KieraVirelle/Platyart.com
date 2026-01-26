@@ -161,6 +161,32 @@
       100% { background-position: 0% 50%; }
     }
 
+    /* corner pixel hearts */
+    .corner-hearts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .corner-hearts span {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M4 2c-1.6 0-3 1.4-3 3 0 3.6 6 7 6 7s6-3.4 6-7c0-1.6-1.4-3-3-3-1 0-1.9.5-2.5 1.3C6.9 2.5 6 2 5 2z' fill='%23ff6f9c' stroke='%23d64c7a' stroke-width='1'/%3E%3C/svg%3E") center/contain no-repeat;
+      animation: floatHeart 3.2s ease-in-out infinite;
+      opacity: 0.85;
+    }
+    .corner-hearts .tl { top: 120px; left: 12px; animation-delay: 0s; }
+    .corner-hearts .tr { top: 120px; right: 12px; animation-delay: 0.5s; }
+    .corner-hearts .bl { bottom: 40px; left: 12px; animation-delay: 1s; }
+    .corner-hearts .br { bottom: 40px; right: 12px; animation-delay: 1.5s; }
+
+    @keyframes floatHeart {
+      0% { transform: translateY(0) scale(1); opacity: 0.75; }
+      50% { transform: translateY(-4px) scale(1.08); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 0.85; }
+    }
+
 
     .chrome {
       background: var(--shell);
@@ -692,6 +718,31 @@
     .sound-toggle:hover { transform: translateY(-2px); box-shadow: 0 12px 22px rgba(195, 110, 130, 0.26); }
     .sound-toggle.muted { opacity: 0.7; text-decoration: line-through; }
 
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 74px;
+      z-index: 25;
+      border: none;
+      background: #ffe0e8;
+      color: #c14f65;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 24px rgba(195, 110, 130, 0.25);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: opacity 160ms ease, transform 160ms ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
     /* Lightbox */
     .lightbox[hidden] { display: none; }
     .lightbox {
@@ -756,6 +807,12 @@
   <body>
   <div class="frame-stack">
     <main class="frame">
+      <div class="corner-hearts">
+        <span class="tl"></span>
+        <span class="tr"></span>
+        <span class="bl"></span>
+        <span class="br"></span>
+      </div>
     <section class="chrome">
       <div class="tabs" aria-label="Portfolio sections">
         <button class="tab active" data-target="landing" aria-controls="landing" aria-selected="true">
@@ -931,6 +988,7 @@
       <img src="" alt="">
     </figure>
   </div>
+  <button class="to-top" aria-label="Back to top">♥</button>
 
   <script>
     const tabs = document.querySelectorAll('.tab');
@@ -942,6 +1000,7 @@
     const addressText = document.getElementById('address-text');
     const backBtn = document.querySelector('.pixel-btn[aria-label="Back"]');
     const fwdBtn = document.querySelector('.pixel-btn[aria-label="Forward"]');
+    const toTop = document.querySelector('.to-top');
     let navHistory = ['landing'];
     let navIndex = 0;
 
@@ -1018,6 +1077,21 @@
     }
 
     updateNavButtons();
+
+    // back-to-top: show after scrolling the frame
+    const frame = document.querySelector('.frame');
+    if (frame && toTop) {
+      frame.addEventListener('scroll', () => {
+        if (frame.scrollTop > 240) {
+          toTop.classList.add('visible');
+        } else {
+          toTop.classList.remove('visible');
+        }
+      });
+      toTop.addEventListener('click', () => {
+        frame.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
 
     // typewriter for address bar
     let typingTimeout;
