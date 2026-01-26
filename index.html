@@ -35,7 +35,7 @@
       padding: 32px;
       position: relative;
       overflow: hidden; /* keep outer background still; scroll happens on frame */
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='10' r='8' fill='%23ffc7d6' stroke='%23f17c95' stroke-width='2'/%3E%3Ccircle cx='10' cy='10' r='3' fill='%23ffedf3'/%3E%3C/svg%3E") 8 8, auto;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M4 4 L30 20 L19 22 L26 34 L20 36 L13 24 L4 28 Z' fill='%23ffc7d6' stroke='%23cc5c86' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 4, auto;
     }
 
     /* floating hearts background */
@@ -730,24 +730,6 @@
       box-shadow: 0 6px 12px rgba(190, 110, 130, 0.22);
     }
 
-    /* global cursor circle */
-    .cursor-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 18px;
-      height: 18px;
-      margin-top: -9px;
-      margin-left: -9px;
-      pointer-events: none;
-      border-radius: 50%;
-      background: transparent;
-      border: 2px solid #f17c95;
-      box-shadow: 0 0 0 2px rgba(255, 206, 220, 0.5);
-      opacity: 0;
-      transition: opacity 120ms ease;
-      z-index: 5;
-    }
 
     /* Mobile */
     @media (max-width: 640px) {
@@ -761,11 +743,6 @@
   <div class="frame-stack">
     <main class="frame">
     <section class="chrome">
-      <div class="retro-bar">
-        <button class="pixel-btn" aria-label="Back">&#9664;</button>
-        <button class="pixel-btn" aria-label="Forward">&#9654;</button>
-        <div class="address-bar" aria-label="Address bar">platyart.studio <span class="caret"></span></div>
-      </div>
       <div class="tabs" aria-label="Portfolio sections">
         <button class="tab active" data-target="landing" aria-controls="landing" aria-selected="true">
           <span class="dot"></span> Landing
@@ -779,6 +756,13 @@
         <button class="tab" data-target="contact" aria-controls="contact" aria-selected="false">
           <span class="dot"></span> Contact
         </button>
+      </div>
+      <div class="retro-bar">
+        <button class="pixel-btn" aria-label="Back">&#9664;</button>
+        <button class="pixel-btn" aria-label="Forward">&#9654;</button>
+        <div class="address-bar" aria-label="Address bar">
+          <span id="address-text">platyart.studio/landing</span><span class="caret"></span>
+        </div>
       </div>
 
       <div class="content">
@@ -933,7 +917,6 @@
       <img src="" alt="">
     </figure>
   </div>
-  <div class="cursor-glow" aria-hidden="true"></div>
 
   <script>
     const tabs = document.querySelectorAll('.tab');
@@ -942,6 +925,7 @@
     const lightbox = document.querySelector('.lightbox');
     const lightboxImg = lightbox.querySelector('img');
     const lightboxClose = lightbox.querySelector('.lightbox__close');
+    const addressText = document.getElementById('address-text');
 
     function activate(targetId) {
       tabs.forEach(t => {
@@ -950,6 +934,7 @@
         t.setAttribute('aria-selected', isActive);
       });
       panes.forEach(p => p.classList.toggle('active', p.id === targetId));
+      typeAddress(`platyart.studio/${targetId}`);
     }
 
     tabs.forEach(tab => {
@@ -960,15 +945,6 @@
       btn.addEventListener('click', () => activate(btn.dataset.target));
     });
 
-    /* cursor circle follows pointer everywhere */
-    const cursorGlow = document.querySelector('.cursor-glow');
-    document.addEventListener('pointermove', (e) => {
-      cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      cursorGlow.style.opacity = 1;
-    });
-    document.addEventListener('pointerleave', () => {
-      cursorGlow.style.opacity = 0;
-    });
 
     function openLightbox(src, alt) {
       lightboxImg.src = src;
@@ -991,6 +967,23 @@
     window.addEventListener('keydown', (e) => {
       if (!lightbox.hidden && (e.key === 'Escape' || e.key === 'Esc')) closeLightbox();
     });
+
+    // typewriter for address bar
+    let typingTimeout;
+    function typeAddress(text) {
+      if (!addressText) return;
+      clearTimeout(typingTimeout);
+      addressText.textContent = "";
+      let i = 0;
+      const type = () => {
+        addressText.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          typingTimeout = setTimeout(type, 35);
+        }
+      };
+      type();
+    }
   </script>
 </body>
 </html>
