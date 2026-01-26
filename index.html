@@ -6,7 +6,7 @@
   <title>Platyart • Pastel Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600&family=Manrope:wght@400;500;600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --blush: #f09aa7;
@@ -81,6 +81,29 @@
     }
     ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ff9fb4, #f06586); }
 
+    .frame-stack {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      padding: 12px;
+    }
+    .frame-stack::before,
+    .frame-stack::after {
+      content: "";
+      position: absolute;
+      inset: 14px 10px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255, 230, 238, 0.9), rgba(255, 210, 226, 0.9));
+      box-shadow: 0 14px 30px rgba(200, 120, 140, 0.28);
+      z-index: 0;
+    }
+    .frame-stack::after {
+      inset: 28px 22px;
+      background: linear-gradient(145deg, rgba(255, 220, 236, 0.8), rgba(255, 200, 222, 0.8));
+      box-shadow: 0 16px 32px rgba(185, 110, 130, 0.24);
+    }
+
     .frame {
       width: min(1100px, 96vw);
       background: var(--paper);
@@ -96,27 +119,34 @@
       max-height: 92vh;
       overflow-y: auto;
       overflow-x: hidden;
+      z-index: 1;
     }
-
-    .frame::before,
+    /* animated neon border around frame */
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 22px;
+      padding: 3px;
+      background: linear-gradient(120deg, #ffb8d1, #ffcfea, #ffdede, #ffb8d1);
+      background-size: 200% 200%;
+      animation: borderGlow 6s ease-in-out infinite;
+      z-index: -2;
+    }
     .frame::after {
       content: "";
       position: absolute;
-      inset: 12px 12px auto auto;
-      width: calc(100% - 24px);
-      height: calc(100% - 24px);
-      border-radius: 14px;
-      border: 3px solid #f3d7d7;
-      z-index: 0;
-      pointer-events: none;
+      inset: 0;
+      border-radius: 18px;
+      background: var(--paper);
+      z-index: -1;
     }
-    .frame::after {
-      inset: 22px 22px auto auto;
-      width: calc(100% - 44px);
-      height: calc(100% - 44px);
-      border: 2px dashed #f0c7c7;
-      opacity: 0.7;
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
+
 
     .chrome {
       background: var(--shell);
@@ -137,6 +167,57 @@
       filter: drop-shadow(0 10px 16px rgba(180, 120, 120, 0.15));
     }
 
+    .retro-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 10px;
+      font-family: 'Silkscreen', monospace;
+    }
+    .pixel-btn {
+      min-width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      background: #ffe4eb;
+      border: 2px solid #dfa3b4;
+      box-shadow: 0 4px 0 #c88398, inset 0 1px 0 #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #c14f65;
+      font-size: 0.9rem;
+      text-shadow: 0 1px 0 #fff;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    .pixel-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #c88398;
+    }
+    .address-bar {
+      flex: 1;
+      height: 36px;
+      border: 2px solid #e5b9c6;
+      border-radius: 10px;
+      background: #fff9fb;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      position: relative;
+      box-shadow: inset 0 1px 0 #fff, 0 4px 10px rgba(180, 110, 130, 0.12);
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.85rem;
+      color: #b34a62;
+    }
+    .address-bar .caret {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: #e05f82;
+      margin-left: 4px;
+      animation: blink 1s steps(2, start) infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
     .tabs {
       display: flex;
       gap: 6px;
@@ -145,6 +226,18 @@
       padding-left: 6px;
       margin-bottom: 12px;
       flex-wrap: wrap;
+      font-family: 'Silkscreen', monospace;
+    }
+    .tabs::before {
+      content: "";
+      position: absolute;
+      inset: -8px -6px 0 -6px;
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(120deg, #ffb8d1, #ffcfea, #ffdede, #ffb8d1);
+      background-size: 200% 200%;
+      animation: borderGlow 6s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.85;
     }
 
     .tab {
@@ -155,8 +248,8 @@
       color: var(--ink);
       padding: 10px 18px 8px;
       border-radius: 12px 12px 0 0;
-      font-family: 'Baloo 2', cursive;
-      font-size: 1rem;
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.95rem;
       letter-spacing: 0.3px;
       cursor: pointer;
       margin-left: -12px;
@@ -379,7 +472,8 @@
       left: -8px;
       background: #fff0f6;
       color: #d64c68;
-      font-weight: 800;
+      font-family: 'Silkscreen', monospace;
+      font-weight: 700;
       border: 2px solid #f3c1cb;
       border-radius: 12px;
       padding: 6px 12px;
@@ -620,11 +714,6 @@
       border-radius: 12px;
       background: #ffeef4;
     }
-    .lightbox__figure figcaption {
-      font-weight: 700;
-      color: #c14f65;
-      text-align: center;
-    }
     .lightbox__close {
       position: absolute;
       top: 6px;
@@ -641,21 +730,22 @@
       box-shadow: 0 6px 12px rgba(190, 110, 130, 0.22);
     }
 
-    /* global cursor glow */
+    /* global cursor circle */
     .cursor-glow {
       position: fixed;
       top: 0;
       left: 0;
-      width: 140px;
-      height: 140px;
-      margin-top: -70px;
-      margin-left: -70px;
+      width: 18px;
+      height: 18px;
+      margin-top: -9px;
+      margin-left: -9px;
       pointer-events: none;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 182, 201, 0.35) 0%, rgba(255, 206, 220, 0.22) 45%, rgba(255, 206, 220, 0) 70%);
-      filter: blur(1px);
+      background: transparent;
+      border: 2px solid #f17c95;
+      box-shadow: 0 0 0 2px rgba(255, 206, 220, 0.5);
       opacity: 0;
-      transition: opacity 180ms ease;
+      transition: opacity 120ms ease;
       z-index: 5;
     }
 
@@ -668,8 +758,14 @@
   </style>
 </head>
   <body>
-  <main class="frame">
+  <div class="frame-stack">
+    <main class="frame">
     <section class="chrome">
+      <div class="retro-bar">
+        <button class="pixel-btn" aria-label="Back">&#9664;</button>
+        <button class="pixel-btn" aria-label="Forward">&#9654;</button>
+        <div class="address-bar" aria-label="Address bar">platyart.studio <span class="caret"></span></div>
+      </div>
       <div class="tabs" aria-label="Portfolio sections">
         <button class="tab active" data-target="landing" aria-controls="landing" aria-selected="true">
           <span class="dot"></span> Landing
@@ -827,6 +923,7 @@
       </div>
     </section>
   </main>
+  </div>
 
   <!-- Lightbox -->
   <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview" hidden>
@@ -834,7 +931,6 @@
     <figure class="lightbox__figure">
       <button class="lightbox__close" aria-label="Close preview">×</button>
       <img src="" alt="">
-      <figcaption></figcaption>
     </figure>
   </div>
   <div class="cursor-glow" aria-hidden="true"></div>
@@ -845,7 +941,6 @@
     const clickableImages = document.querySelectorAll('.gallery img, .pricing-grid img');
     const lightbox = document.querySelector('.lightbox');
     const lightboxImg = lightbox.querySelector('img');
-    const lightboxCaption = lightbox.querySelector('figcaption');
     const lightboxClose = lightbox.querySelector('.lightbox__close');
 
     function activate(targetId) {
@@ -865,7 +960,7 @@
       btn.addEventListener('click', () => activate(btn.dataset.target));
     });
 
-    /* cursor glow */
+    /* cursor circle follows pointer everywhere */
     const cursorGlow = document.querySelector('.cursor-glow');
     document.addEventListener('pointermove', (e) => {
       cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
@@ -875,21 +970,9 @@
       cursorGlow.style.opacity = 0;
     });
 
-    // ensure glow stays visible over interactive elements (tabs, buttons)
-    document.querySelectorAll('.tab, button, .tile').forEach(el => {
-      el.addEventListener('pointerenter', () => { cursorGlow.style.opacity = 1; });
-      el.addEventListener('pointerleave', (e) => {
-        // if leaving to nowhere visible, hide
-        if (!e.relatedTarget || !(e.relatedTarget instanceof HTMLElement)) {
-          cursorGlow.style.opacity = 0;
-        }
-      });
-    });
-
     function openLightbox(src, alt) {
       lightboxImg.src = src;
       lightboxImg.alt = alt;
-      lightboxCaption.textContent = alt;
       lightbox.hidden = false;
       lightbox.focus();
     }
