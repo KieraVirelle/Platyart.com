@@ -31,12 +31,10 @@
         linear-gradient(135deg, #ffe8f0 0%, #fbe1df 50%, #f7cfd0 100%);
       font-family: 'Manrope', system-ui, sans-serif;
       color: var(--ink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       padding: 32px;
       position: relative;
-      overflow: hidden;
+      overflow: hidden; /* keep outer background still; scroll happens on frame */
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='10' r='8' fill='%23ffc7d6' stroke='%23f17c95' stroke-width='2'/%3E%3Ccircle cx='10' cy='10' r='3' fill='%23ffedf3'/%3E%3C/svg%3E") 8 8, auto;
     }
 
@@ -94,6 +92,10 @@
         0 0 0 8px rgba(255, 206, 220, 0.35);
       padding: 18px;
       position: relative;
+      margin: 0 auto;
+      max-height: 92vh;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .frame::before,
@@ -361,10 +363,12 @@
       overflow: hidden;
       background: #ffe8ee;
       box-shadow: inset 0 1px 0 #fff;
+      height: 220px;
+      display: grid;
     }
     .card figure img {
       width: 100%;
-      height: 200px;
+      height: 100%;
       object-fit: cover;
       display: block;
     }
@@ -443,6 +447,8 @@
         0 14px 28px rgba(197, 110, 130, 0.2),
         0 0 0 6px #ffeef4 inset;
       animation: bob 6s ease-in-out infinite;
+      display: grid;
+      place-items: stretch;
     }
     .tile img {
       width: 100%;
@@ -502,6 +508,25 @@
     }
     .gallery::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ff9fb4, #f06586); }
 
+    /* frame scrollbar */
+    .frame {
+      scrollbar-color: #f07f90 #ffe8ee;
+      scrollbar-width: thin;
+    }
+    .frame::-webkit-scrollbar { width: 12px; }
+    .frame::-webkit-scrollbar-track {
+      background: #ffe8ee;
+      border-radius: 10px;
+      border: 2px solid #f5cfd6;
+    }
+    .frame::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #f7a1b2, #ef6f8c);
+      border-radius: 10px;
+      border: 2px solid #ffe8ee;
+      box-shadow: inset 0 0 0 2px #ffd6e0;
+    }
+    .frame::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ff9fb4, #f06586); }
+
     @keyframes bob {
       0% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(-6px) rotate(-1deg); }
@@ -559,6 +584,81 @@
     .sound-toggle:hover { transform: translateY(-2px); box-shadow: 0 12px 22px rgba(195, 110, 130, 0.26); }
     .sound-toggle.muted { opacity: 0.7; text-decoration: line-through; }
 
+    /* Lightbox */
+    .lightbox[hidden] { display: none; }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+    }
+    .lightbox__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(30, 10, 20, 0.45);
+      backdrop-filter: blur(4px);
+    }
+    .lightbox__figure {
+      position: relative;
+      background: #fff9f8;
+      padding: 14px;
+      border-radius: 18px;
+      border: 3px solid #f3c3cd;
+      box-shadow: 0 24px 48px rgba(80, 30, 40, 0.35);
+      max-width: min(90vw, 720px);
+      max-height: 80vh;
+      display: grid;
+      gap: 10px;
+      z-index: 1;
+    }
+    .lightbox__figure img {
+      width: 100%;
+      height: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #ffeef4;
+    }
+    .lightbox__figure figcaption {
+      font-weight: 700;
+      color: #c14f65;
+      text-align: center;
+    }
+    .lightbox__close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      border: none;
+      background: #ffe0e8;
+      color: #c14f65;
+      font-size: 1.2rem;
+      font-weight: 900;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(190, 110, 130, 0.22);
+    }
+
+    /* global cursor glow */
+    .cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 140px;
+      height: 140px;
+      margin-top: -70px;
+      margin-left: -70px;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 182, 201, 0.35) 0%, rgba(255, 206, 220, 0.22) 45%, rgba(255, 206, 220, 0) 70%);
+      filter: blur(1px);
+      opacity: 0;
+      transition: opacity 180ms ease;
+      z-index: 5;
+    }
+
     /* Mobile */
     @media (max-width: 640px) {
       body { padding: 18px; }
@@ -567,7 +667,7 @@
     }
   </style>
 </head>
-<body>
+  <body>
   <main class="frame">
     <section class="chrome">
       <div class="tabs" aria-label="Portfolio sections">
@@ -728,9 +828,25 @@
     </section>
   </main>
 
+  <!-- Lightbox -->
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview" hidden>
+    <div class="lightbox__backdrop"></div>
+    <figure class="lightbox__figure">
+      <button class="lightbox__close" aria-label="Close preview">×</button>
+      <img src="" alt="">
+      <figcaption></figcaption>
+    </figure>
+  </div>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
   <script>
     const tabs = document.querySelectorAll('.tab');
     const panes = document.querySelectorAll('.pane');
+    const clickableImages = document.querySelectorAll('.gallery img, .pricing-grid img');
+    const lightbox = document.querySelector('.lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxCaption = lightbox.querySelector('figcaption');
+    const lightboxClose = lightbox.querySelector('.lightbox__close');
 
     function activate(targetId) {
       tabs.forEach(t => {
@@ -747,6 +863,50 @@
 
     document.querySelectorAll('.cta-row .btn').forEach(btn => {
       btn.addEventListener('click', () => activate(btn.dataset.target));
+    });
+
+    /* cursor glow */
+    const cursorGlow = document.querySelector('.cursor-glow');
+    document.addEventListener('pointermove', (e) => {
+      cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      cursorGlow.style.opacity = 1;
+    });
+    document.addEventListener('pointerleave', () => {
+      cursorGlow.style.opacity = 0;
+    });
+
+    // ensure glow stays visible over interactive elements (tabs, buttons)
+    document.querySelectorAll('.tab, button, .tile').forEach(el => {
+      el.addEventListener('pointerenter', () => { cursorGlow.style.opacity = 1; });
+      el.addEventListener('pointerleave', (e) => {
+        // if leaving to nowhere visible, hide
+        if (!e.relatedTarget || !(e.relatedTarget instanceof HTMLElement)) {
+          cursorGlow.style.opacity = 0;
+        }
+      });
+    });
+
+    function openLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightboxCaption.textContent = alt;
+      lightbox.hidden = false;
+      lightbox.focus();
+    }
+
+    clickableImages.forEach(img => {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    });
+
+    function closeLightbox() { lightbox.hidden = true; }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.classList.contains('lightbox__backdrop')) closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (!lightbox.hidden && (e.key === 'Escape' || e.key === 'Esc')) closeLightbox();
     });
   </script>
 </body>
