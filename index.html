@@ -118,6 +118,75 @@
       box-shadow: 0 16px 32px rgba(185, 110, 130, 0.24);
     }
 
+    .brand-banner {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 22px 12px;
+      margin-bottom: 12px;
+      background: radial-gradient(circle at 20% 30%, #fff1f6 0 22%, transparent 32%), linear-gradient(90deg, #ffb4d2, #ffd8e8, #ffb4d2);
+      border: 3px solid #ea95a8;
+      border-radius: 16px;
+      box-shadow:
+        0 10px 22px rgba(195, 120, 135, 0.26),
+        0 0 0 4px #ffe8ef inset;
+      font-family: 'Silkscreen', monospace;
+      font-size: 1.12rem;
+      letter-spacing: 1px;
+      color: #b02f51;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      text-transform: lowercase;
+    }
+    .brand-banner::before,
+    .brand-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .brand-banner::before {
+      background:
+        radial-gradient(circle at 14% 60%, rgba(255, 255, 255, 0.7) 0 12%, transparent 26%),
+        radial-gradient(circle at 86% 32%, rgba(255, 214, 231, 0.8) 0 14%, transparent 28%);
+      opacity: 0.95;
+    }
+    .brand-banner::after {
+      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.6) 50%, transparent 65%);
+      mix-blend-mode: screen;
+      animation: sheen 2.8s linear infinite;
+    }
+    @keyframes sheen {
+      from { transform: translateX(-60%); }
+      to   { transform: translateX(120%); }
+    }
+    .brand-banner .mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: #fff2f7;
+      border: 2px solid #f5c3d1;
+      border-radius: 999px;
+      box-shadow: 0 6px 14px rgba(220, 120, 150, 0.25);
+      position: relative;
+      z-index: 1;
+    }
+    .brand-banner .mini::after {
+      content: "✦";
+      color: #ff7fa8;
+      font-size: 0.95rem;
+      margin-left: 4px;
+      animation: sparkleTwirl 2.4s ease-in-out infinite;
+    }
+    @keyframes sparkleTwirl {
+      0%,100% { transform: rotate(0deg) scale(1); opacity: 0.9; }
+      50% { transform: rotate(12deg) scale(1.12); opacity: 1; }
+    }
+
     .frame {
       width: min(1100px, 96vw);
       background: var(--paper);
@@ -443,7 +512,31 @@
       margin: 8px 0 6px;
       font-family: 'Baloo 2', cursive;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
-      color: #d85f73;
+      color: #d13064;
+      letter-spacing: 0.4px;
+      text-shadow:
+        0 3px 12px rgba(209, 48, 100, 0.24),
+        0 1px 0 #ffdce6;
+    }
+    .logo-line {
+      white-space: normal;
+      background: linear-gradient(90deg, #ff6f9c, #ff94b5 40%, #ff6f9c);
+      -webkit-background-clip: text;
+      color: transparent;
+      position: relative;
+      padding-left: 6px;
+    }
+    .logo-line::before {
+      content: "♡";
+      position: absolute;
+      left: -18px;
+      top: 2px;
+      font-size: 1.2rem;
+      color: #ff7fa8;
+      filter: drop-shadow(0 2px 4px rgba(255, 127, 168, 0.35));
+    }
+    @media (min-width: 720px) {
+      .logo-line { white-space: nowrap; }
     }
 
     .hero p { margin: 0 0 12px; line-height: 1.6; }
@@ -554,41 +647,36 @@
     /* Gallery */
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-top: 6px;
-      max-height: 420px;
-      overflow-y: auto;
-      padding-right: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+      align-items: stretch;
+    }
+    @media (max-width: 1024px) {
+      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .gallery { grid-template-columns: repeat(1, minmax(0, 1fr)); }
     }
     .tile {
-      aspect-ratio: 4 / 5;
-      background: linear-gradient(180deg, #ffe8ee, #ffd7e3);
+      aspect-ratio: 1 / 1;
+      background: #fffaf9;
       border: 3px solid var(--line);
-      border-radius: 12px;
+      border-radius: 14px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 24px rgba(196, 124, 137, 0.2);
-      display: grid;
-      place-items: center;
-      color: #c87888;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      isolation: isolate;
-      transition: transform 180ms ease, box-shadow 180ms ease;
-      border: 3px solid #f1c3cd;
-      box-shadow:
-        0 14px 28px rgba(197, 110, 130, 0.2),
-        0 0 0 6px #ffeef4 inset;
-      animation: bob 6s ease-in-out infinite;
+      box-shadow: 0 14px 26px rgba(196, 124, 137, 0.2);
       display: grid;
       place-items: stretch;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      border: 3px solid #f1c3cd;
     }
     .tile img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       display: block;
+      background: #fffdfb;
     }
     .tile::before {
       content: "♥";
@@ -605,19 +693,8 @@
       opacity: 0.92;
       z-index: 2;
     }
-    .tile::after {
-      content: "";
-      position: absolute;
-      inset: -20% -10%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 45%),
-                  radial-gradient(circle at 70% 20%, rgba(255,220,230,0.6), transparent 55%),
-                  radial-gradient(circle at 50% 80%, rgba(255,255,255,0.3), transparent 50%);
-      pointer-events: none;
-      z-index: 1;
-      filter: blur(0.4px);
-    }
     .tile:hover {
-      transform: translateY(-4px) rotate(-1.2deg);
+      transform: translateY(-4px);
       box-shadow:
         0 18px 32px rgba(197, 110, 130, 0.28),
         0 0 0 6px #ffeef4 inset;
@@ -814,6 +891,9 @@
         <span class="br"></span>
       </div>
     <section class="chrome">
+      <div class="brand-banner" aria-label="Platyart logo">
+        <span class="mini">✿ platyart ♡</span>
+      </div>
       <div class="tabs" aria-label="Portfolio sections">
         <button class="tab active" data-target="landing" aria-controls="landing" aria-selected="true">
           <span class="dot"></span> Landing
@@ -840,8 +920,8 @@
         <article class="pane active" id="landing">
           <div class="hero">
             <div>
-              <h1>Platyart — stylized personal commissions</h1>
-              <p>Hi, I’m Platyart. I draw tailored characters with a bold, chibi-anime twist, punchy cel-shading, and playful gothic accents—built to match the exact vibe you request.</p>
+              <h1 class="logo-line">platyart <span aria-hidden="true">✿</span></h1>
+              <p>Hi! I’m Platy. I draw custom, stylized characters—mostly Discord stickers, but they work anywhere. I favor a distinct look, yet I’m flexible: tell me the vibe you want and we’ll see if it fits my wheelhouse. NSFW pieces are available on request.</p>
               <div class="kawaii-ribbon">
                 <span class="pill">chibi-kawaii energy</span>
                 <span class="pill">bold cel shading</span>
@@ -859,11 +939,12 @@
               <span class="sticker">Open slots</span>
               <h3>Currently open for</h3>
               <ul>
-                <li>Character busts • 3 slots</li>
-                <li>Full scenes • 2 slots</li>
-                <li>Merch licensing • 1 slot</li>
+                <li>Character full body • 5 slots</li>
+                <li>Character bust • 5 slots</li>
+                <li>Character sketch • 10 slots</li>
+                <li>Gil commissions • 3 slots</li>
               </ul>
-              <p style="margin-top:10px;">Turnaround: 1–2 weeks • Rush available</p>
+              <p style="margin-top:10px;">Turnaround: about 1 month • Rush available</p>
             </div>
           </div>
         </article>
