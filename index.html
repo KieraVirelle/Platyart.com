@@ -661,21 +661,23 @@
       .gallery { grid-template-columns: repeat(1, minmax(0, 1fr)); }
     }
     .tile {
-      aspect-ratio: 1 / 1;
       background: #fffaf9;
       border: 3px solid var(--line);
       border-radius: 14px;
       position: relative;
       overflow: hidden;
       box-shadow: 0 14px 26px rgba(196, 124, 137, 0.2);
-      display: grid;
-      place-items: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 180ms ease, box-shadow 180ms ease;
       border: 3px solid #f1c3cd;
+      padding: 14px;
     }
     .tile img {
       width: 100%;
-      height: 100%;
+      height: auto;
+      max-height: 100%;
       object-fit: contain;
       display: block;
       background: #fffdfb;
